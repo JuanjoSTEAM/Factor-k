@@ -17,10 +17,9 @@ interface StudentDashboardProps {
     welcome: string
     continuelearning: string
     innovativeAreas: string
-    quantumLab: string
-    digitalArts: string
-    advancedLogic: string
-    ethicsPhilosophy: string
+    greatLibrary: string
+    cosmosLab: string
+    ethicsSandbox: string
     videoLessons: string
     viewAll: string
     progress: string
@@ -92,24 +91,19 @@ const videosByGrade = {
 
 const areas = [
   {
-    id: "quantum",
-    name: "Quantum Lab",
+    id: "library",
+    name: "The Great Library",
     progress: 67,
   },
   {
-    id: "arts",
-    name: "Digital Arts",
+    id: "cosmos",
+    name: "Cosmos Lab",
     progress: 45,
   },
   {
-    id: "logic",
-    name: "Advanced Logic",
-    progress: 82,
-  },
-  {
     id: "ethics",
-    name: "Ethics & Philosophy",
-    progress: 34,
+    name: "Ethics Sandbox",
+    progress: 82,
   },
 ]
 
@@ -130,10 +124,9 @@ export function StudentDashboard({ translations }: StudentDashboardProps) {
   const [selectedGrade, setSelectedGrade] = useState("Grade 1-2")
   
   const areaNames: Record<string, string> = {
-    quantum: translations.quantumLab,
-    arts: translations.digitalArts,
-    logic: translations.advancedLogic,
-    ethics: translations.ethicsPhilosophy,
+    library: translations.greatLibrary,
+    cosmos: translations.cosmosLab,
+    ethics: translations.ethicsSandbox,
   }
 
   return (
@@ -179,7 +172,7 @@ export function StudentDashboard({ translations }: StudentDashboardProps) {
             </Button>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {areas.map((area) => (
               <motion.div
                 key={area.id}
