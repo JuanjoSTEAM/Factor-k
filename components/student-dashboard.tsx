@@ -1,21 +1,16 @@
 "use client"
 
+import { useState } from "react"
 import { motion } from "framer-motion"
 import { 
-  Atom, 
-  Palette, 
-  Brain, 
-  Scale, 
   Play, 
-  Clock,
-  Trophy,
-  Flame,
   BookOpen,
   ArrowRight,
-  Star
+  ExternalLink
 } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface StudentDashboardProps {
   translations: {
@@ -35,81 +30,86 @@ interface StudentDashboardProps {
   }
 }
 
+// YouTube videos organized by grade
+const videosByGrade = {
+  "Grade 1-2": [
+    {
+      id: "UCVrlNt2IUs",
+      title: "Introduction to Numbers",
+      youtubeId: "UCVrlNt2IUs",
+      url: "https://www.youtube.com/watch?v=UCVrlNt2IUs",
+    },
+    {
+      id: "p4fEAIpuqHU",
+      title: "Basic Shapes & Colors",
+      youtubeId: "p4fEAIpuqHU",
+      url: "https://www.youtube.com/watch?v=p4fEAIpuqHU",
+    },
+  ],
+  "Grade 3-4": [
+    {
+      id: "c9cTIjBqFTw",
+      title: "Multiplication Mastery",
+      youtubeId: "c9cTIjBqFTw",
+      url: "https://www.youtube.com/watch?v=c9cTIjBqFTw",
+    },
+    {
+      id: "OYjW1gV8SJU",
+      title: "Introduction to Fractions",
+      youtubeId: "OYjW1gV8SJU",
+      url: "https://www.youtube.com/watch?v=OYjW1gV8SJU",
+    },
+  ],
+  "Grade 5-6": [
+    {
+      id: "Lqf5WmulMYI",
+      title: "Pre-Algebra Concepts",
+      youtubeId: "Lqf5WmulMYI",
+      url: "https://www.youtube.com/watch?v=Lqf5WmulMYI",
+    },
+    {
+      id: "7c8OtBpLCj8",
+      title: "Geometry Foundations",
+      youtubeId: "7c8OtBpLCj8",
+      url: "https://www.youtube.com/watch?v=7c8OtBpLCj8",
+    },
+  ],
+  "Grade 7-8": [
+    {
+      id: "sqdlZ0AYyW4",
+      title: "Algebra Essentials",
+      youtubeId: "sqdlZ0AYyW4",
+      url: "https://www.youtube.com/watch?v=sqdlZ0AYyW4",
+    },
+    {
+      id: "QqqYP5JT7A4",
+      title: "Advanced Problem Solving",
+      youtubeId: "QqqYP5JT7A4",
+      url: "https://www.youtube.com/watch?v=QqqYP5JT7A4",
+    },
+  ],
+}
+
 const areas = [
   {
     id: "quantum",
-    icon: Atom,
-    gradient: "from-primary to-primary/60",
+    name: "Quantum Lab",
     progress: 67,
   },
   {
     id: "arts",
-    icon: Palette,
-    gradient: "from-secondary to-secondary/60",
+    name: "Digital Arts",
     progress: 45,
   },
   {
     id: "logic",
-    icon: Brain,
-    gradient: "from-accent to-accent/60",
+    name: "Advanced Logic",
     progress: 82,
   },
   {
     id: "ethics",
-    icon: Scale,
-    gradient: "from-chart-4 to-chart-4/60",
+    name: "Ethics & Philosophy",
     progress: 34,
-  },
-]
-
-const videos = [
-  {
-    id: 1,
-    title: "Quantum Superposition Explained",
-    area: "Quantum Lab",
-    duration: "12:34",
-    progress: 75,
-    thumbnail: "quantum",
-  },
-  {
-    id: 2,
-    title: "Digital Painting Masterclass",
-    area: "Digital Arts",
-    duration: "24:15",
-    progress: 30,
-    thumbnail: "arts",
-  },
-  {
-    id: 3,
-    title: "Advanced Logical Reasoning",
-    area: "Advanced Logic",
-    duration: "18:42",
-    progress: 100,
-    thumbnail: "logic",
-  },
-  {
-    id: 4,
-    title: "The Ethics of AI",
-    area: "Ethics & Philosophy",
-    duration: "15:20",
-    progress: 0,
-    thumbnail: "ethics",
-  },
-  {
-    id: 5,
-    title: "Wave-Particle Duality",
-    area: "Quantum Lab",
-    duration: "20:11",
-    progress: 50,
-    thumbnail: "quantum",
-  },
-  {
-    id: 6,
-    title: "3D Modeling Basics",
-    area: "Digital Arts",
-    duration: "32:00",
-    progress: 15,
-    thumbnail: "arts",
   },
 ]
 
@@ -117,16 +117,18 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 }
+    transition: { staggerChildren: 0.05 }
   }
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 10 },
   visible: { opacity: 1, y: 0 }
 }
 
 export function StudentDashboard({ translations }: StudentDashboardProps) {
+  const [selectedGrade, setSelectedGrade] = useState("Grade 1-2")
+  
   const areaNames: Record<string, string> = {
     quantum: translations.quantumLab,
     arts: translations.digitalArts,
@@ -136,191 +138,154 @@ export function StudentDashboard({ translations }: StudentDashboardProps) {
 
   return (
     <div className="min-h-screen pt-24 pb-12 px-4">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Welcome Section */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            {translations.welcome}, <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Alex</span>
+          <h1 className="text-2xl md:text-3xl font-semibold mb-1">
+            {translations.welcome}, <span className="text-primary">Alex</span>
           </h1>
-          <p className="text-muted-foreground">{translations.continuelearning}</p>
+          <p className="text-muted-foreground text-sm">{translations.continuelearning}</p>
         </motion.div>
 
-        {/* Stats Row */}
+        {/* Stats Row - Simplified */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          className="grid grid-cols-4 gap-3 mb-10"
         >
-          <StatCard icon={<BookOpen className="w-5 h-5" />} label={translations.progress} value="67%" color="primary" />
-          <StatCard icon={<Flame className="w-5 h-5" />} label={translations.streak} value="12 days" color="secondary" />
-          <StatCard icon={<Trophy className="w-5 h-5" />} label={translations.achievements} value="24" color="accent" />
-          <StatCard icon={<Star className="w-5 h-5" />} label="XP Points" value="2,450" color="chart-4" />
+          <StatCard label={translations.progress} value="67%" />
+          <StatCard label={translations.streak} value="12 days" />
+          <StatCard label={translations.achievements} value="24" />
+          <StatCard label="XP" value="2,450" />
         </motion.div>
 
-        {/* Innovative Areas */}
+        {/* Learning Areas - Minimal */}
         <motion.section
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mb-12"
+          className="mb-10"
         >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl md:text-2xl font-semibold">{translations.innovativeAreas}</h2>
-            <Button variant="ghost" className="text-primary">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium">{translations.innovativeAreas}</h2>
+            <Button variant="ghost" size="sm" className="text-primary text-sm">
               {translations.viewAll}
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <ArrowRight className="w-3 h-3 ml-1" />
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {areas.map((area) => (
-              <AreaCard
+              <motion.div
                 key={area.id}
-                icon={<area.icon className="w-8 h-8" />}
-                title={areaNames[area.id]}
-                progress={area.progress}
-                gradient={area.gradient}
-              />
+                variants={itemVariants}
+                whileHover={{ y: -2 }}
+                className="p-4 rounded-xl border border-border/50 bg-card/50 cursor-pointer hover:border-primary/30 transition-colors"
+              >
+                <h3 className="font-medium text-sm mb-2">{areaNames[area.id]}</h3>
+                <div className="flex items-center gap-2">
+                  <Progress value={area.progress} className="h-1.5 flex-1" />
+                  <span className="text-xs text-muted-foreground">{area.progress}%</span>
+                </div>
+              </motion.div>
             ))}
           </div>
         </motion.section>
 
-        {/* Video Lessons */}
+        {/* Video Lessons by Grade */}
         <motion.section
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl md:text-2xl font-semibold">{translations.videoLessons}</h2>
-            <Button variant="ghost" className="text-primary">
-              {translations.viewAll}
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium">{translations.videoLessons}</h2>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videos.map((video) => (
-              <VideoCard key={video.id} video={video} />
+          <Tabs value={selectedGrade} onValueChange={setSelectedGrade} className="w-full">
+            <TabsList className="mb-4 bg-muted/50">
+              {Object.keys(videosByGrade).map((grade) => (
+                <TabsTrigger 
+                  key={grade} 
+                  value={grade}
+                  className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  {grade}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            
+            {Object.entries(videosByGrade).map(([grade, videos]) => (
+              <TabsContent key={grade} value={grade}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {videos.map((video) => (
+                    <VideoCard key={video.id} video={video} />
+                  ))}
+                </div>
+              </TabsContent>
             ))}
-          </div>
+          </Tabs>
         </motion.section>
       </div>
     </div>
   )
 }
 
-function StatCard({ 
-  icon, 
-  label, 
-  value, 
-  color 
-}: { 
-  icon: React.ReactNode
-  label: string
-  value: string
-  color: string 
-}) {
+function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <motion.div
       variants={itemVariants}
-      whileHover={{ scale: 1.02, y: -2 }}
-      className="glass-card rounded-2xl p-4"
+      className="p-3 rounded-xl border border-border/50 bg-card/50 text-center"
     >
-      <div className={`w-10 h-10 rounded-xl bg-${color}/10 text-${color} flex items-center justify-center mb-3`}>
-        {icon}
-      </div>
-      <p className="text-2xl font-bold">{value}</p>
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="text-lg font-semibold">{value}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
     </motion.div>
   )
 }
 
-function AreaCard({
-  icon,
-  title,
-  progress,
-  gradient,
-}: {
-  icon: React.ReactNode
-  title: string
-  progress: number
-  gradient: string
-}) {
+function VideoCard({ video }: { video: { id: string; title: string; youtubeId: string; url: string } }) {
   return (
-    <motion.div
+    <motion.a
+      href={video.url}
+      target="_blank"
+      rel="noopener noreferrer"
       variants={itemVariants}
-      whileHover={{ scale: 1.03, y: -5 }}
-      className="glass-card rounded-2xl p-6 cursor-pointer group"
+      whileHover={{ y: -2 }}
+      className="block rounded-xl border border-border/50 bg-card/50 overflow-hidden hover:border-primary/30 transition-colors group"
     >
-      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-4 group-hover:shadow-lg transition-shadow`}>
-        {icon}
-      </div>
-      <h3 className="font-semibold text-lg mb-3">{title}</h3>
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Progress</span>
-          <span className="font-medium">{progress}%</span>
-        </div>
-        <Progress value={progress} className="h-2" />
-      </div>
-    </motion.div>
-  )
-}
-
-function VideoCard({ video }: { video: typeof videos[0] }) {
-  const thumbnailGradients: Record<string, string> = {
-    quantum: "from-primary/80 to-primary/40",
-    arts: "from-secondary/80 to-secondary/40",
-    logic: "from-accent/80 to-accent/40",
-    ethics: "from-chart-4/80 to-chart-4/40",
-  }
-
-  return (
-    <motion.div
-      variants={itemVariants}
-      whileHover={{ scale: 1.02, y: -3 }}
-      className="glass-card rounded-2xl overflow-hidden cursor-pointer group"
-    >
-      {/* Thumbnail */}
-      <div className={`relative aspect-video bg-gradient-to-br ${thumbnailGradients[video.thumbnail]} flex items-center justify-center`}>
-        <motion.div
-          whileHover={{ scale: 1.1 }}
-          className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
-        >
-          <Play className="w-6 h-6 text-white fill-white ml-1" />
-        </motion.div>
-        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md flex items-center gap-1">
-          <Clock className="w-3 h-3" />
-          {video.duration}
-        </div>
-        {video.progress > 0 && video.progress < 100 && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
-            <div 
-              className="h-full bg-white/80 transition-all"
-              style={{ width: `${video.progress}%` }}
-            />
+      {/* YouTube Thumbnail */}
+      <div className="relative aspect-video bg-muted">
+        <img
+          src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+          alt={video.title}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback to hqdefault if maxresdefault doesn't exist
+            (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`
+          }}
+        />
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center group-hover:scale-105 transition-transform">
+            <Play className="w-5 h-5 text-primary-foreground fill-current ml-0.5" />
           </div>
-        )}
-        {video.progress === 100 && (
-          <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-md">
-            Completed
-          </div>
-        )}
+        </div>
       </div>
       
       {/* Info */}
-      <div className="p-4">
-        <p className="text-xs text-primary font-medium mb-1">{video.area}</p>
-        <h4 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">
-          {video.title}
-        </h4>
+      <div className="p-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-muted-foreground" />
+          <h4 className="font-medium text-sm group-hover:text-primary transition-colors">
+            {video.title}
+          </h4>
+        </div>
+        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
       </div>
-    </motion.div>
+    </motion.a>
   )
 }
