@@ -48,7 +48,7 @@ export function Footer({ translations }: FooterProps) {
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <span className="font-bold text-xl bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                NexusMinds
+                Factor K
               </span>
             </div>
             <p className="text-muted-foreground text-sm mb-4">
@@ -126,13 +126,13 @@ export function Footer({ translations }: FooterProps) {
                     <div className="prose prose-sm dark:prose-invert">
                       <p>Last updated: March 2026</p>
                       <h3>1. Acceptance of Terms</h3>
-                      <p>By accessing or using NexusMinds, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
+                      <p>By accessing or using Factor K, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
                       <h3>2. User Accounts</h3>
                       <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
                       <h3>3. Educational Content</h3>
                       <p>All educational materials provided through our platform are for personal, non-commercial use only.</p>
                       <h3>4. Intellectual Property</h3>
-                      <p>All content, features, and functionality are owned by NexusMinds and are protected by international copyright, trademark, and other intellectual property laws.</p>
+                      <p>All content, features, and functionality are owned by Factor K and are protected by international copyright, trademark, and other intellectual property laws.</p>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -193,7 +193,7 @@ export function Footer({ translations }: FooterProps) {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                hello@nexusminds.edu
+                hello@factork.edu
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="w-4 h-4" />
@@ -216,7 +216,7 @@ export function Footer({ translations }: FooterProps) {
           className="pt-8 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <p className="text-sm text-muted-foreground">
-            &copy; 2026 NexusMinds. All rights reserved.
+            &copy; 2026 Factor K. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground">

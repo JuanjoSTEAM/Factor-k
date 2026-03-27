@@ -15,7 +15,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'NexusMinds | Educational Platform for Gifted Children',
+  title: 'Factor K | Educational Platform for Gifted Children',
   description: 'A futuristic educational platform designed for highly gifted children with high intellectual potential. Featuring Quantum Lab, Digital Arts, Advanced Logic, and Ethics & Philosophy.',
   generator: 'v0.app',
   icons: {

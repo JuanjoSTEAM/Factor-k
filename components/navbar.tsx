@@ -54,7 +54,7 @@ export function Navbar({ language, setLanguage, translations }: NavbarProps) {
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <span className="font-bold text-xl bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                NexusMinds
+                Factor K
               </span>
             </motion.div>
 
