@@ -6,10 +6,14 @@ import { Navbar } from "@/components/navbar"
 import { LandingHero } from "@/components/landing-hero"
 import { AuthModal } from "@/components/auth-modal"
 import { StudentDashboard } from "@/components/student-dashboard"
+import { StudentDashboardV2 } from "@/components/learning/student-dashboard-v2"
 import { TeacherDashboard } from "@/components/teacher-dashboard"
 import { Footer } from "@/components/footer"
+import { HeroScanModalV2 } from "@/components/hero-scan-modal-v2"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Home } from "lucide-react"
+import { initializeDatabase } from "@/lib/db/initialize"
+import { StudentProfile } from "@/lib/types"
 
 // Translations object
 const translations = {
@@ -308,36 +312,54 @@ const translations = {
 }
 
 type Language = keyof typeof translations
-type View = "landing" | "student" | "teacher"
+type View = "landing" | "student" | "teacher" | "hero-scan"
 
 export default function HomePage() {
-  const [language, setLanguage] = useState<Language>("en")
+  const [ language, setLanguage] = useState<Language>("en")
   const [view, setView] = useState<View>("landing")
   const [selectedRole, setSelectedRole] = useState<"student" | "teacher" | null>(null)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showHeroScan, setShowHeroScan] = useState(false)
+  const [currentStudent, setCurrentStudent] = useState<StudentProfile | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [dbInitialized, setDbInitialized] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    // Inicializar base de datos
+    initializeDatabase().finally(() => setDbInitialized(true))
   }, [])
 
   const t = translations[language]
 
   const handleSelectRole = (role: "student" | "teacher") => {
     setSelectedRole(role)
-    setShowAuthModal(true)
+    if (role === "student") {
+      // Para estudiantes: mostrar HeroScan
+      setShowHeroScan(true)
+    } else {
+      // Para profesores: mostrar Auth Modal
+      setShowAuthModal(true)
+    }
+  }
+
+  const handleHeroScanComplete = (profile: StudentProfile) => {
+    setCurrentStudent(profile)
+    setShowHeroScan(false)
+    setView("student")
   }
 
   const handleAuth = () => {
     setShowAuthModal(false)
-    if (selectedRole) {
-      setView(selectedRole)
+    if (selectedRole === "teacher") {
+      setView("teacher")
     }
   }
 
   const handleBackToLanding = () => {
     setView("landing")
     setSelectedRole(null)
+    setCurrentStudent(null)
   }
 
   if (!mounted) {
@@ -433,7 +455,15 @@ export default function HomePage() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
           >
-            <StudentDashboard translations={t.student} />
+            {currentStudent ? (
+              <StudentDashboardV2
+                student={currentStudent}
+                appliedTheme={currentStudent.appliedTheme}
+                onSignOut={handleBackToLanding}
+              />
+            ) : (
+              <StudentDashboard translations={t.student} />
+            )}
           </motion.div>
         )}
 
@@ -456,6 +486,12 @@ export default function HomePage() {
         onAuth={handleAuth}
         role={selectedRole || "student"}
         translations={t.auth}
+      />
+
+      {/* Hero Scan Modal (nuevos estudiantes) */}
+      <HeroScanModalV2
+        isOpen={showHeroScan && dbInitialized}
+        onComplete={handleHeroScanComplete}
       />
 
       {/* Footer */}

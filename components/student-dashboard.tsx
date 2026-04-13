@@ -11,6 +11,7 @@ import {
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { HeroScanModal, AdventurerProfile } from "./hero-scan-modal"
 
 interface StudentDashboardProps {
   translations: {
@@ -122,6 +123,11 @@ const itemVariants = {
 
 export function StudentDashboard({ translations }: StudentDashboardProps) {
   const [selectedGrade, setSelectedGrade] = useState("Grade 1-2")
+  const [heroProfile, setHeroProfile] = useState<AdventurerProfile | null>(null)
+
+  const handleHeroScanComplete = (profile: AdventurerProfile) => {
+    setHeroProfile(profile)
+  }
   
   const areaNames: Record<string, string> = {
     library: translations.greatLibrary,
@@ -139,25 +145,35 @@ export function StudentDashboard({ translations }: StudentDashboardProps) {
           className="mb-8"
         >
           <h1 className="text-2xl md:text-3xl font-semibold mb-1">
-            {translations.welcome}, <span className="text-primary">Alex</span>
+            ¡Bienvenido, valiente aventurero! 🚀
           </h1>
-          <p className="text-muted-foreground text-sm">{translations.continuelearning}</p>
+          {heroProfile && (
+            <div className="mb-2">
+              <p className="text-primary font-medium">
+                Eres un {heroProfile.adventurerClass} {heroProfile.classEmoji}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {heroProfile.classDescription}
+              </p>
+            </div>
+          )}
+          <p className="text-muted-foreground text-sm">¡Prepárate para tus Misiones de Héroe! 💪</p>
         </motion.div>
 
-        {/* Stats Row - Simplified */}
+        {/* Stats Row - Epic Mode */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="grid grid-cols-4 gap-3 mb-10"
         >
-          <StatCard label={translations.progress} value="67%" />
-          <StatCard label={translations.streak} value="12 days" />
-          <StatCard label={translations.achievements} value="24" />
-          <StatCard label="XP" value="2,450" />
+          <StatCard label="Poder Acumulado" value="67%" />
+          <StatCard label="Racha Épica" value="12 días 🔥" />
+          <StatCard label="Logros Legendarios" value="24 🏆" />
+          <StatCard label="XP Total" value="2,450 ⭐" />
         </motion.div>
 
-        {/* Learning Areas - Minimal */}
+        {/* Learning Areas - Hero Missions */}
         <motion.section
           variants={containerVariants}
           initial="hidden"
@@ -165,9 +181,9 @@ export function StudentDashboard({ translations }: StudentDashboardProps) {
           className="mb-10"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium">{translations.innovativeAreas}</h2>
+            <h2 className="text-lg font-medium">¡Misiones de Héroe! ⚔️</h2>
             <Button variant="ghost" size="sm" className="text-primary text-sm">
-              {translations.viewAll}
+              Ver Todas
               <ArrowRight className="w-3 h-3 ml-1" />
             </Button>
           </div>
@@ -190,14 +206,14 @@ export function StudentDashboard({ translations }: StudentDashboardProps) {
           </div>
         </motion.section>
 
-        {/* Video Lessons by Grade */}
+        {/* Video Lessons - Final Boss Challenges */}
         <motion.section
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium">{translations.videoLessons}</h2>
+            <h2 className="text-lg font-medium">¡Desafíos del Jefe Final! 👹</h2>
           </div>
           
           <Tabs value={selectedGrade} onValueChange={setSelectedGrade} className="w-full">
@@ -225,6 +241,12 @@ export function StudentDashboard({ translations }: StudentDashboardProps) {
           </Tabs>
         </motion.section>
       </div>
+
+      {/* Hero Scan Modal */}
+      <HeroScanModal
+        isOpen={!heroProfile}
+        onComplete={handleHeroScanComplete}
+      />
     </div>
   )
 }
